@@ -1,0 +1,10 @@
+with(LinearAlgebra):
+A := <<0|1|1|0|0>,<0|0|1|0|1>,<1|0|0|1|0>,<0|0|1|0|1>,<0|1|0|0|0>>;
+n := RowDimension(A);
+U,Sigma, Vt := SingularValues (A, output = ['U', 'S', 'Vt']);
+k := 1;
+LW[0] := [Matrix(k,2)];
+Lx[0] := [Vector[column] (n)];
+n0 := n;
+nops(LW[n-1]);
+
