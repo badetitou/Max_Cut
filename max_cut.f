@@ -1,4 +1,4 @@
-      PROGRAM MAC_CUT
+cd       PROGRAM MAC_CUT
       IMPLICIT NONE
 *     PARAMETER
       INTEGER LDA, LDU, LDVT
@@ -10,12 +10,12 @@
 *     ARRAY
       DOUBLE PRECISION A(LDA,LDA), U(LDU,LDU), VT(LDVT,LDVT), S(LDA)
 *     VARIABLE RESULTAT
-      
+
       WRITE (*,*) 'Entrer la matrice triangulaire inférieure A'
       CALL READ_MPL (M,N, A, LDA)
 
       CALL CALC_SVD(M,N,A,LDA, U, LDU, VT, LDVT, S, LDA)
-      
+
       CALL CALC_TILDE(K, U, M, M, LDU)
       CALL CALC_TILDE(K, VT, N, N, LDVT)
       CALL SOLVE_PB (M, U, LDU ,VT, LDVT,
@@ -23,10 +23,11 @@
       STOP
       END
 ************************
-*      SUBROUTINE SOLVE_PB 
+*      SUBROUTINE SOLVE_PB
 ************************
       SUBROUTINE SOLVE_PB(MA,UTILDE,LDUTILDE,
      $       VTTILDE,LDVTTILDE, S, LDS, K)
+*     Parameters
       IMPLICIT NONE
       INTEGER MA
       INTEGER LDUTILDE, LDVTTILDE, LDS
@@ -39,6 +40,7 @@
       DOUBLE PRECISION LX(2,2**MA, MA)
       DOUBLE PRECISION W0(K,2), X0(MA)
       DOUBLE PRECISION W1(K,2), X1(MA)
+*     Code
 *      Initialisation des tableaux
       DO I = 1, MA, 1
               LX(2,1,I) = 0
@@ -68,7 +70,7 @@
               DO J = 1, NBELEM, 1
                     DO Y = 1, K, 1
                             DO Z = 1, 2, 1
-                                   W0(Y,Z) = LW(1,J, Y, Z) 
+                                   W0(Y,Z) = LW(1,J, Y, Z)
                             END DO
                     END DO
                     DO Y = 1, MA, 1
@@ -78,10 +80,10 @@
                     CALL W_UPDATE(K, W0, X0, MA, I, K, UTILDE
      $                      , LDUTILDE, MA*K**2d0, VTTILDE
      $                      , LDVTTILDE)
-                     
+
                     DO Y = 1, K, 1
                             DO Z = 1, 2, 1
-                                   W1(Y,Z) = LW(1,J, Y, Z) 
+                                   W1(Y,Z) = LW(1,J, Y, Z)
                             END DO
                     END DO
                     DO Y = 1, MA, 1
@@ -92,9 +94,9 @@
      $                      , LDUTILDE, MA*K**2d0, VTTILDE
      $                      , LDVTTILDE)
                     CALL ADD (2, 2**MA, K,2, LW, K, 2, W0, MA,
-     $                    X0,2, 2**MA,MA, LX,NBELEMNEXT) 
+     $                    X0,2, 2**MA,MA, LX,NBELEMNEXT)
                     CALL ADD (2, 2**MA, K,2, LW, K, 2, W1, MA,
-     $                    X1,2, 2**MA,MA, LX,NBELEMNEXT) 
+     $                    X1,2, 2**MA,MA, LX,NBELEMNEXT)
               END DO
               NBELEM = NBELEMNEXT
       END DO
@@ -119,8 +121,8 @@
       DOUBLE PRECISION MAP(NBELEM)
       INTEGER BEST, I
       DOUBLE PRECISION VAL
-*     Code      
-      CALL VALEUR(MAP,NBELEM, OLW,S,LDS, 
+*     Code
+      CALL VALEUR(MAP,NBELEM, OLW,S,LDS,
      $        MLW, NLW,OLW,PLW,LW)
       BEST = 1
       VAL = MAP(1)
@@ -142,7 +144,7 @@
       DO I = 1,OLX,1
              IF (NINT(LX(2,BEST,I)) == 1) THEN
                      PRINT *,I
-             END IF 
+             END IF
       END DO
 
       PRINT *, 'Sommet de S2'
@@ -150,15 +152,15 @@
              IF (NINT(LX(2,BEST,I)) == 0) THEN
                      PRINT *,I
              END IF
-      END DO 
+      END DO
       END
 ************************
 *      SUBROUTINE VALEUR
 ************************
-      SUBROUTINE VALEUR(MAP,NBELEM, K,S,LDS, 
+      SUBROUTINE VALEUR(MAP,NBELEM, K,S,LDS,
      $        MLW, NLW,OLW,PLW,LW)
       IMPLICIT NONE
-*     Parameter
+*     Parameters
       INTEGER MLW,NLW,OLW,PLW
       DOUBLE PRECISION LW(MLW,NLW,OLW,PLW)
       INTEGER NBELEM
@@ -177,14 +179,14 @@
               MAP(I) = MAP(I) + LW(2,I,J,1) * S(J) * LW(2,I,J,2)
           END DO
       END DO
-      END 
+      END
 ************************
 *      SUBROUTINE ADD
 ************************
       SUBROUTINE ADD (SLW, MLW, NLW, OLW, LW ,MW, NW, W,NX, X
      $           ,MLX,NLX,OLX,LX, NBELEMNEXT)
       IMPLICIT NONE
-*     Parameter
+*     Parameters
       INTEGER MLW,NLW,MW,NW, OLW, SLW, MLX,NLX,OLX
       INTEGER NX
       DOUBLE PRECISION LW(SLW, MLW,NLW,OLW), W(MW,NW), X(NX)
@@ -200,7 +202,7 @@
               DO K = 1, OLW, 1
                  IF (LW(2, I,J,K) .ne. W(J,K)) THEN
                      PRE = .TRUE.
-                 END IF 
+                 END IF
               END DO
           END DO
           IF (PRE .eqv. .FALSE.) THEN
@@ -223,8 +225,9 @@
 ************************
 *      SUBROUTINE W_UPDATE
 ************************
-      SUBROUTINE W_UPDATE (LDW, W, X, SX, N, K,UTILDE,LDUTILDE, 
+      SUBROUTINE W_UPDATE (LDW, W, X, SX, N, K,UTILDE,LDUTILDE,
      $  FACT, VTTILDE,LDVTTILDE)
+*     Parameters
       IMPLICIT NONE
       INTEGER SX, LDW, N, K
       DOUBLE PRECISION FACT
@@ -234,7 +237,9 @@
       DOUBLE PRECISION UTILDE(LDUTILDE,LDUTILDE)
       INTEGER LDVTTILDE
       DOUBLE PRECISION VTTILDE(LDVTTILDE,LDVTTILDE)
+*     Local
       INTEGER I
+*     Code
       IF (X(N) == 1) THEN
              DO I=1, K,1
                      W(I,1) = W(I,1) + UTILDE(N,I)/FACT
@@ -254,9 +259,10 @@
       DOUBLE PRECISION A(LDA,*)
       INTEGER I, J
       DOUBLE PRECISION FACT
+*     Code
       FACT = M*K**2d0
       DO I=1, N, 1
-             CALL DSCAL(M, FACT,A(1,I), 1); 
+             CALL DSCAL(M, FACT,A(1,I), 1);
       END DO
       DO I=1, N, 1
               DO J=1, M, 1
@@ -269,15 +275,16 @@
 ************************
       SUBROUTINE CALC_SVD(M,N,A,LDA, U, LDU, VT, LDVT, S, LDS)
       IMPLICIT NONE
-*     Local integer      
+*     Parameters
       DOUBLE PRECISION A(LDA,LDA), U(LDU,LDU), VT(LDVT,LDVT), S(LDS)
       INTEGER LDA, LDU, LDVT, LDS
       INTEGER M,N
+*     Local
       INTEGER INFO, LWORK, IWORK (8*LDA)
       INTEGER LWMAX
       PARAMETER (LWMAX=1000)
       DOUBLE PRECISION WORK(LWMAX)
-      LWORK = -1     
+      LWORK = -1
       CALL DGESDD ('Singular vectors', M,N, A, LDA, S, U, LDU, VT, LDVT,
      $        WORK, LWORK, IWORK, INFO)
       LWORK = MIN( LWMAX, INT( WORK( 1 ) ) )
